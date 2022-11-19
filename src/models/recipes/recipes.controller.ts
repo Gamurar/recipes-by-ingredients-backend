@@ -1,16 +1,13 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Query } from "@nestjs/common";
 import { RecipesService } from "./recipes.service";
 
 @Controller()
 export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
-  @Get("test")
-  getTest() {
-    const links = [
-      "https://natashaskitchen.com/pumpkin-cookies/",
-      "https://natashaskitchen.com/oatmeal-raisin-cookies/",
-      "https://natashaskitchen.com/dsdfsf/",
-    ];
-    return this.recipesService.findByLinks(links);
+  @Get("recipes")
+  getRecipes(@Query("ingredients") ingredients) {
+    if (!ingredients) return;
+    console.log("ingredients: ", ingredients.split(","));
+    return this.recipesService.findByIngredients(ingredients.split(","));
   }
 }
