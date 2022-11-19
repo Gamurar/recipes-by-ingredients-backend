@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { Ingredient } from "../ingredients/entities/ingredient.entity";
+import { RecipeDto } from "./entities/recipe.dto";
 import { Recipe } from "./entities/recipe.entity";
 
 @Injectable()
@@ -8,6 +10,8 @@ export class RecipesService {
   constructor(
     @InjectRepository(Recipe)
     private recipesRepository: Repository<Recipe>,
+    @InjectRepository(Ingredient)
+    private ingredientsRepository: Repository<Ingredient>,
   ) {}
 
   findAll(): Promise<Recipe[]> {
@@ -31,13 +35,21 @@ export class RecipesService {
     await this.recipesRepository.delete(id);
   }
 
-  async saveAll(recipes: Recipe[]): Promise<Recipe[]> {
+  async saveAll(recipes: RecipeDto[]): Promise<string> {
     const links = recipes.map((recipe) => recipe.link);
     const existingRecipes = await this.findByLinks(links);
     const existingLinks = existingRecipes.map((recipe) => recipe.link);
     const newRecipes = recipes.filter(
       (recipe) => !existingLinks.includes(recipe.link),
     );
-    return this.recipesRepository.save(newRecipes);
+
+    for (const newRecipe of newRecipes) {
+      const savedRecipe = await this.recipesRepository.save(newRecipe);
+      for (const ingredient of savedRecipe.ingredients) {
+        ingredient.recipe = savedRecipe;
+        await this.ingredientsRepository.save(ingredient);
+      }
+    }
+    return "Saved!";
   }
 }
