@@ -31,6 +31,20 @@ export class RecipesService {
     });
   }
 
+  findByIngredients(ingredients: string[]) {
+    const OrQuery = ingredients.map((ingredient) => ({
+      name: ingredient,
+    }));
+    return this.recipesRepository.find({
+      relations: {
+        ingredients: true,
+      },
+      where: {
+        ingredients: OrQuery,
+      },
+    });
+  }
+
   async remove(id: string): Promise<void> {
     await this.recipesRepository.delete(id);
   }

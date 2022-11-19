@@ -14,7 +14,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get("recipes")
+  @Get("upload-recipes")
   async scrapRecipes() {
     const recipes = await this.appService.getRecipes();
     return await this.recipesService.saveAll(recipes);
