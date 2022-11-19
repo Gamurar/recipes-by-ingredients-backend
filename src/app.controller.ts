@@ -10,12 +10,12 @@ export class AppController {
   ) {}
 
   @Get()
-  getHello(): string {
+  getRecipes(): string {
     return this.appService.getHello();
   }
 
   @Get("recipes")
-  async getRecipes() {
+  async scrapRecipes() {
     const recipes = await this.appService.getRecipes();
     return await this.recipesService.saveAll(recipes);
   }

@@ -5,6 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Recipe } from "./models/recipes/entities/recipe.entity";
 import { Ingredient } from "./models/ingredients/entities/ingredient.entity";
 import { RecipesModule } from "./models/recipes/recipes.module";
+import { IngredientsModule } from "./models/ingredients/ingredients.module";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RecipesModule } from "./models/recipes/recipes.module";
       synchronize: true,
     }),
     RecipesModule,
+    IngredientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
