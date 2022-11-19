@@ -28,12 +28,14 @@ export class AppService {
         description: info.description,
         ingredients: info.ingredients,
         link,
+        imageUrl: info.imageUrl,
       });
       console.log("recipe: ", {
         name: info.title,
         description: info.description,
         ingredients: info.ingredients,
         link,
+        imageUrl: info.imageUrl,
       });
     }
 
@@ -61,10 +63,14 @@ export class AppService {
       const title = _extractInnerText(document, ".wprm-recipe-name");
       const description = _extractInnerText(document, ".wprm-recipe-summary");
       const ingredients = _extractIngredients();
+      const imageUrl = (
+        document.querySelector(".wp-block-image img") as HTMLImageElement
+      ).src;
       return {
         title,
         description,
         ingredients,
+        imageUrl,
       };
 
       function _extractIngredients(): IngredientDto[] {

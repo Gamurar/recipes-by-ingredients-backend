@@ -10,4 +10,6 @@ export class RecipeDto {
   link: string;
 
   ingredients?: IngredientDto[];
+
+  imageUrl?: string;
 }

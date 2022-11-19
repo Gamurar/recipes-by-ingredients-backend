@@ -15,6 +15,9 @@ export class Recipe {
   @Column({ nullable: true, default: null, unique: true })
   link: string;
 
+  @Column({ nullable: true, default: null })
+  imageUrl?: string;
+
   @OneToMany(() => Ingredient, (ingredient) => ingredient.recipe)
   ingredients?: Ingredient[];
 }
