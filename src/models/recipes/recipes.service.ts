@@ -1,24 +1,55 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { Ingredient } from "../ingredients/entities/ingredient.entity";
+import { RecipeDto } from "./entities/recipe.dto";
 import { Recipe } from "./entities/recipe.entity";
 
 @Injectable()
 export class RecipesService {
   constructor(
     @InjectRepository(Recipe)
-    private usersRepository: Repository<Recipe>,
+    private recipesRepository: Repository<Recipe>,
+    @InjectRepository(Ingredient)
+    private ingredientsRepository: Repository<Ingredient>,
   ) {}
 
   findAll(): Promise<Recipe[]> {
-    return this.usersRepository.find();
+    return this.recipesRepository.find();
   }
 
   findOne(id: number): Promise<Recipe> {
-    return this.usersRepository.findOneBy({ id });
+    return this.recipesRepository.findOneBy({ id });
+  }
+
+  findByLinks(links: string[]): Promise<Recipe[]> {
+    const whereOrQuery = links.map((link) => ({
+      link,
+    }));
+    return this.recipesRepository.find({
+      where: whereOrQuery,
+    });
   }
 
   async remove(id: string): Promise<void> {
-    await this.usersRepository.delete(id);
+    await this.recipesRepository.delete(id);
+  }
+
+  async saveAll(recipes: RecipeDto[]): Promise<string> {
+    const links = recipes.map((recipe) => recipe.link);
+    const existingRecipes = await this.findByLinks(links);
+    const existingLinks = existingRecipes.map((recipe) => recipe.link);
+    const newRecipes = recipes.filter(
+      (recipe) => !existingLinks.includes(recipe.link),
+    );
+
+    for (const newRecipe of newRecipes) {
+      const savedRecipe = await this.recipesRepository.save(newRecipe);
+      for (const ingredient of savedRecipe.ingredients) {
+        ingredient.recipe = savedRecipe;
+        await this.ingredientsRepository.save(ingredient);
+      }
+    }
+    return "Saved!";
   }
 }

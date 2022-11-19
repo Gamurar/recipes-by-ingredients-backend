@@ -4,17 +4,17 @@ import { Ingredient } from "../../ingredients/entities/ingredient.entity";
 @Entity()
 export class Recipe {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @Column()
   name: string;
 
-  @Column()
-  description: string;
+  @Column({ nullable: true, default: null })
+  description?: string;
 
-  @Column({ unique: true })
+  @Column({ nullable: true, default: null, unique: true })
   link: string;
 
   @OneToMany(() => Ingredient, (ingredient) => ingredient.recipe)
-  ingredients: Ingredient[];
+  ingredients?: Ingredient[];
 }
