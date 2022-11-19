@@ -8,5 +8,6 @@ import { Recipe } from "./entities/recipe.entity";
   imports: [TypeOrmModule.forFeature([Recipe])],
   providers: [RecipesService],
   controllers: [RecipesController],
+  exports: [RecipesService],
 })
-export class RecipesModule { }
+export class RecipesModule {}

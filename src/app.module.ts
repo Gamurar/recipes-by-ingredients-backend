@@ -22,5 +22,6 @@ import { RecipesModule } from "./models/recipes/recipes.module";
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [AppService],
 })
 export class AppModule {}

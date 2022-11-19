@@ -1,5 +1,6 @@
 import { Logger, Injectable } from "@nestjs/common";
 import puppeteer from "puppeteer";
+import { Recipe } from "./models/recipes/entities/recipe.entity";
 
 @Injectable()
 export class AppService {
@@ -9,7 +10,7 @@ export class AppService {
     return "Hello World!";
   }
 
-  async getGoodbye() {
+  async getRecipes(): Promise<Recipe[]> {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto("https://natashaskitchen.com/category/dessert/cookies/");
@@ -24,21 +25,30 @@ export class AppService {
     }, resultsSelector);
 
     const titles = [];
-    const promises = [];
 
-    links.forEach(async (link) => {
+    const recipes: Recipe[] = [];
+
+    for (const link of links.slice(0, 5)) {
       await page.goto(link);
       console.log("goto ", link);
       const title = await this.findRecipeTitle(page);
-      console.log("title ", title);
+      if (/video/i.test(title)) {
+        continue;
+      }
+      recipes.push({
+        name: title,
+        link,
+      });
+      console.log("recipe: ", {
+        name: title,
+        link,
+      });
       titles.push(title);
-    });
+    }
 
     await browser.close();
 
-    return titles;
-
-    // return page.content();
+    return recipes;
   }
 
   async findRecipeTitle(page): Promise<string> {
