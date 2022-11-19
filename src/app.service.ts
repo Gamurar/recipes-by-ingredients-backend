@@ -19,24 +19,28 @@ export class AppService {
     const links = await this.findRecipeLinks(page);
     const recipes: RecipeDto[] = [];
 
-    for (const link of links.slice(0, 5)) {
-      await page.goto(link);
-      console.log("goto ", link);
-      const info = await this.findRecipeInfo(page);
-      recipes.push({
-        name: info.title,
-        description: info.description,
-        ingredients: info.ingredients,
-        link,
-        imageUrl: info.imageUrl,
-      });
-      console.log("recipe: ", {
-        name: info.title,
-        description: info.description,
-        ingredients: info.ingredients,
-        link,
-        imageUrl: info.imageUrl,
-      });
+    for (const link of links) {
+      try {
+        await page.goto(link);
+        console.log("goto ", link);
+        const info = await this.findRecipeInfo(page);
+        recipes.push({
+          name: info.title.slice(0, 255),
+          description: info.description.slice(0, 255),
+          ingredients: info.ingredients,
+          link,
+          imageUrl: info.imageUrl,
+        });
+        console.log("recipe: ", {
+          name: info.title,
+          description: info.description,
+          ingredients: info.ingredients,
+          link,
+          imageUrl: info.imageUrl,
+        });
+      } catch (e) {
+        console.log("error: ", e);
+      }
     }
 
     await browser.close();
@@ -63,9 +67,8 @@ export class AppService {
       const title = _extractInnerText(document, ".wprm-recipe-name");
       const description = _extractInnerText(document, ".wprm-recipe-summary");
       const ingredients = _extractIngredients();
-      const imageUrl = (
-        document.querySelector(".wp-block-image img") as HTMLImageElement
-      ).src;
+      const imageUrl = (document.querySelector(".post img") as HTMLImageElement)
+        ?.src;
       return {
         title,
         description,
