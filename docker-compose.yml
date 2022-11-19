@@ -1,0 +1,16 @@
+version: '1'
+services:
+  mysql:
+    container_name: recipes
+    restart: always
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 'young20'
+      MYSQL_USER: 'gamurar'
+      MYSQL_PASSWORD: 'young20'
+    volumes:
+      - my-datavolume:/var/lib/mysql
+    ports:
+      - "3306:3306"
+volumes:
+  my-datavolume:
