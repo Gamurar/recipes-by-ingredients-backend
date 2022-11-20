@@ -104,41 +104,9 @@ export class AppService {
         return ingredients;
       }
 
-      function _extractInnerText(parent, selector) {
-        return (parent.querySelector(selector) as HTMLElement)?.innerText;
+      function _extractInnerText(parent: Element | Document, selector: string) {
+        return parent.querySelector<HTMLElement>(selector)?.innerText;
       }
     });
-  }
-
-  extractIngredients(): IngredientDto[] {
-    const ingredients: IngredientDto[] = [];
-    const ingredientNodes = document.querySelectorAll(
-      ".wprm-recipe-ingredient",
-    );
-    for (const ingredientNode of ingredientNodes) {
-      const amount = this.extractInnerText(
-        ingredientNode,
-        ".wprm-recipe-ingredient-amount",
-      );
-      const unit = this.extractInnerText(
-        ingredientNode,
-        ".wprm-recipe-ingredient-unit",
-      );
-      const name = this.extractInnerText(
-        ingredientNode,
-        ".wprm-recipe-ingredient-name",
-      );
-      ingredients.push({
-        name,
-        unit,
-        amount,
-      });
-    }
-
-    return ingredients;
-  }
-
-  extractInnerText(parent, selector) {
-    return (parent.querySelector(selector) as HTMLElement).innerText;
   }
 }
