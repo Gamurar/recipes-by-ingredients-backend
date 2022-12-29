@@ -7,7 +7,6 @@ export class RecipesController {
   @Get("recipes")
   getRecipes(@Query("ingredients") ingredients) {
     if (!ingredients) return [];
-    console.log("ingredients: ", ingredients.split("|"));
     return this.recipesService.findByIngredients(ingredients.split("|"));
   }
 }
